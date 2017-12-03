@@ -1,8 +1,6 @@
 package test.sdc.mongodb;
 
-
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
+import org.bson.Document;
 import test.sdc.model.Vessel;
 import test.sdc.model.VisibilityType;
 
@@ -34,17 +32,17 @@ final class VesselConverter {
     /**
      * Transform MongoDB object into domain object.
      *
-     * @param dbObject MongoDB object
+     * @param document MongoDB object
      * @return domain object
      * @throws NullPointerException mandatory argument is missing
      */
-    public static Vessel fromJson(final DBObject dbObject) {
-        requireNonNull(dbObject, "Input object is missing");
-        return Vessel.fromUuid(String.valueOf(dbObject.get(ID)))
-                .withName(String.valueOf(dbObject.get(NAME)))
-                .withCategory(String.valueOf(dbObject.get(CATEGORY)))
-                .withCreationCenter(String.valueOf(dbObject.get(CREATION_CENTER)))
-                .withVisibility(readVisibility(dbObject))
+    public static Vessel fromJson(final Document document) {
+        requireNonNull(document, "Input object is missing");
+        return Vessel.fromUuid(String.valueOf(document.get(ID)))
+                .withName(String.valueOf(document.get(NAME)))
+                .withCategory(String.valueOf(document.get(CATEGORY)))
+                .withCreationCenter(String.valueOf(document.get(CREATION_CENTER)))
+                .withVisibility(readVisibility(document))
                 .build();
     }
 
@@ -56,16 +54,15 @@ final class VesselConverter {
      * @return MongoDB object
      * @throws NullPointerException mandatory argument is missing
      */
-    public static DBObject toJson(final String uuid, final Vessel vessel) {
+    public static Document toJson(final String uuid, final Vessel vessel) {
         requireNonNull(uuid, "UUID is missing");
         requireNonNull(vessel, "Input object is missing");
-        return BasicDBObjectBuilder.start()
-                .add(ID, uuid)
-                .add(NAME, vessel.getName())
-                .add(CATEGORY, String.valueOf(vessel.getCategory().getUuid()))
-                .add(CREATION_CENTER, String.valueOf(vessel.getCreationCenter()))
-                .add(VISIBILITY, generateVisibility(vessel))
-                .get();
+        return new Document()
+                .append(ID, uuid)
+                .append(NAME, vessel.getName())
+                .append(CATEGORY, String.valueOf(vessel.getCategory().getUuid()))
+                .append(CREATION_CENTER, String.valueOf(vessel.getCreationCenter()))
+                .append(VISIBILITY, generateVisibility(vessel));
     }
 
     /**
@@ -83,11 +80,11 @@ final class VesselConverter {
     /**
      * Read visibility type from input MongoDB object.
      *
-     * @param dbObject MongoDB object
+     * @param document MongoDB object
      * @return visibility type
      */
-    private static VisibilityType readVisibility(final DBObject dbObject) {
-        final Object field = dbObject.get(VISIBILITY);
+    private static VisibilityType readVisibility(final Document document) {
+        final Object field = document.get(VISIBILITY);
         return Objects.equals(field, GLOBAL_VISIBILITY) ? ALL_CENTERS : CREATION_CENTER_ONLY;
     }
 

@@ -6,8 +6,9 @@ import com.lordofthejars.nosqlunit.core.LoadStrategyEnum;
 import com.lordofthejars.nosqlunit.mongodb.EmbeddedMongoInstancesFactory;
 import com.lordofthejars.nosqlunit.mongodb.InMemoryMongoDb;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
-import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -36,8 +37,8 @@ public class VesselServiceIT {
     @Rule
     public MongoDbRule embeddedMongoDbRule = newMongoDbRule().defaultEmbeddedMongoDb(DB_NAME);
 
-    private DBCollection vesselsCollection() {
-        return this.mongo.getDB(DB_NAME).getCollection(Vessel.class.getSimpleName());
+    private MongoCollection<Document> vesselsCollection() {
+        return this.mongo.getDatabase(DB_NAME).getCollection("Vessel");
     }
 
     @Test

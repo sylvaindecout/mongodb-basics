@@ -1,6 +1,6 @@
 package test.sdc.mongodb;
 
-import com.mongodb.DBObject;
+import org.bson.Document;
 import org.junit.Test;
 import test.sdc.model.Vessel;
 
@@ -21,8 +21,8 @@ public class VesselConverterTest {
                 .withCreationCenter("Le_center")
                 .build();
 
-        final DBObject dbObject = toJson("2", inputVessel);
-        final Vessel outputVessel = fromJson(dbObject);
+        final Document document = toJson("2", inputVessel);
+        final Vessel outputVessel = fromJson(document);
 
         assertThat(outputVessel).isEqualToComparingFieldByField(inputVessel);
     }

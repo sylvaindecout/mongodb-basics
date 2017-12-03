@@ -1,13 +1,19 @@
 package test.sdc.mongodb;
 
-import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import test.sdc.model.CenterReference;
 import test.sdc.model.Vessel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 import static test.sdc.mongodb.VesselConverter.*;
 
 /**
@@ -17,14 +23,14 @@ public final class VesselService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VesselService.class);
 
-    private final DBCollection vesselsCollection;
+    private final MongoCollection<Document> vesselsCollection;
 
     /**
      * Constructor.
      *
      * @param vesselsCollection collection of MongoDB documents for vessels
      */
-    public VesselService(final DBCollection vesselsCollection) {
+    public VesselService(final MongoCollection<Document> vesselsCollection) {
         this.vesselsCollection = vesselsCollection;
     }
 
@@ -37,16 +43,10 @@ public final class VesselService {
     public List<Vessel> findAll(final CenterReference center) {
         LOGGER.trace("Find vessels by site ID: {}", center);
         final List<Vessel> res = new ArrayList<>();
-        final DBObject query = BasicDBObjectBuilder.start()
-                .add("$or", Arrays.asList(
-                        new BasicDBObject(VISIBILITY, GLOBAL_VISIBILITY),
-                        new BasicDBObject(VISIBILITY, center.getUuid())))
-                .get();
-        final DBCursor cursor = this.vesselsCollection.find(query);
-        while (cursor.hasNext()) {
-            final DBObject dbObject = cursor.next();
-            res.add(fromJson(dbObject));
-        }
+        this.vesselsCollection
+                .find(or(eq(VISIBILITY, GLOBAL_VISIBILITY), eq(VISIBILITY, center.getUuid())))
+                .map(VesselConverter::fromJson)
+                .into(res);
         LOGGER.trace("Found {} match(es) for center={}", res.size(), center);
         return res;
     }
@@ -59,14 +59,11 @@ public final class VesselService {
      */
     public Optional<Vessel> find(final String uuid) {
         LOGGER.trace("Find vessel by UUID '{}'", uuid);
-        final DBObject query = BasicDBObjectBuilder.start()
-                .add(ID, uuid)
-                .get();
-        final DBObject dbObject = this.vesselsCollection.findOne(query);
-        LOGGER.trace("Found {}match for vessel ID={}", dbObject == null ? "no " : "", uuid);
-        return dbObject == null
-                ? Optional.empty()
-                : Optional.of(fromJson(dbObject));
+        final Vessel res = this.vesselsCollection.find(eq(ID, uuid))
+                .map(VesselConverter::fromJson)
+                .first();
+        LOGGER.trace("Found {}match for vessel ID={}", res == null ? "no " : "", uuid);
+        return Optional.ofNullable(res);
     }
 
     /**
@@ -77,8 +74,8 @@ public final class VesselService {
     public void add(final Vessel vessel) {
         LOGGER.trace("Create {}", vessel);
         final String uuid = UUID.randomUUID().toString();
-        final DBObject dbObject = toJson(uuid, vessel);
-        this.vesselsCollection.insert(dbObject);
+        final Document document = toJson(uuid, vessel);
+        this.vesselsCollection.insertOne(document);
         LOGGER.trace("Creation of vessel {} completed", vessel);
     }
 
