@@ -1,0 +1,38 @@
+{
+  "Vessel": [
+    {
+      "_id": "0",
+      "name": "GLOBAL_1",
+      "visibility": "_ALL",
+      "category": "TANKER",
+      "creation": "1"
+    },
+    {
+      "_id": "1",
+      "name": "GLOBAL_2",
+      "visibility": "_ALL",
+      "category": "TANKER",
+      "creation": "2"
+    },
+    {
+      "_id": "2",
+      "name": "LOCAL_1",
+      "visibility": "1",
+      "category": "TANKER",
+      "creation": "1"
+    },
+    {
+      "_id": "3",
+      "name": "LOCAL_2",
+      "visibility": "2",
+      "category": "TANKER",
+      "creation": "2"
+    },
+    {
+      "name": "Le_Name",
+      "visibility": "_ALL",
+      "category": "Cargo",
+      "creation": "Le_center"
+    }
+  ]
+}
