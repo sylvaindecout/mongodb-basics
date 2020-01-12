@@ -19,7 +19,7 @@
         <junitparams.version>1.1.1</junitparams.version>
         <assertj.version>3.8.0</assertj.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>1.2.17</log4j.version>
+        <logback.version>1.2.3</logback.version>
         <nosqlunit.version>0.14.0</nosqlunit.version>
         <mongodb.version>3.2.2</mongodb.version>
         <fongo.version>2.0.12</fongo.version>
@@ -70,18 +70,18 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
+            <artifactId>log4j-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>jul-to-slf4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
 
         <!-- MongoDB -->
