@@ -19,7 +19,7 @@
         <junitparams.version>1.1.1</junitparams.version>
         <assertj.version>3.8.0</assertj.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <logback.version>1.2.3</logback.version>
+        <logback.version>1.3.12</logback.version>
         <nosqlunit.version>0.14.0</nosqlunit.version>
         <mongodb.version>3.2.2</mongodb.version>
         <fongo.version>2.0.12</fongo.version>
